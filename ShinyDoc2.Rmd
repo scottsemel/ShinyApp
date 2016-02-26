@@ -1,0 +1,71 @@
+---
+title: "Simulation to Visualize the Central Limit Theorem in Action"
+author: "Scott Semel"
+date: "February 24, 2016"
+output: html_document
+runtime: shiny
+---
+
+Outline
+========================================================
+
+This is the outline for the presentation. The purpose is simply just to show how the Central Limit Theorem works.
+
+- Synopsis
+- Data Processing 
+- Results
+
+Synopsis
+========================================================
+
+The goal is to try to show visually how the Central Limit Theorem (CLT) works with a simulation example. Even though most distributions are not normally distributed the sample of n means of a distribution will approximate a normal distribution as n gets large. We are going to use an example with means of an exponential distribution to demonstrate this effect. 
+
+
+Data Processing
+========================================================
+The exponential distribution is the probability distribution that describes the time between events where events occur continuously and independently at a constant average rate. The typical model has events arriving at a rate L, and then time between events which is modeled using an exponential distribution has a mean of 1/L. The mean of this exponential distribution is 1/L = 5 and the standard deviation is also 1/L. Here is a histogram of 1000 draws from simulated exponential distribution with L = .2.
+
+As you can see from the picture the exponential distribution is skewed but the mean still appears to be around 5. Now consider the mean of the exponential distribution. For example, if you receive phone calls at an average rate of 5 per hour, then you can expect to wait 12 minutes for every call on average. Here is a histogram of 1000 draws from simulated exponential distribution with Lambda = .2.
+```{r, echo = FALSE}
+set.seed(3000)
+hist(rexp(1000,.2))
+```
+
+Results
+========================================================
+Now consider the mean of the exponential distribution. As the sample size increases the average of the means of several exponential distributions should converge to a normal distribution
+with mean = 5 and sigma = s / sqrt(n) = 5 / sqrt(40) = .8. The Central Limit Theorm clearly shows that with n > 30 the approximation to normal distribution of means of another distribution is pretty good no matter what the original distribution is. Just move the slider bar in the ShinyApp to see it converge.
+
+
+```{r, echo=FALSE}
+inputPanel(
+  sliderInput("samples",
+                  "The number of samples of means drawn:",
+                  min = 10,
+                  max = 46,
+                  value = 1)
+     
+             )
+
+
+renderPlot({
+  # Get input$ from ui.R
+    sampleValue <- input$samples
+
+    # Generate distribution of the means
+    set.seed(3000)
+    xseq<-seq(2,9,.01)
+    densities<-dnorm(xseq, 5,.8)*500
+    means = NULL
+    for (i in 1 : 1000) means = c(means, mean(rexp(sampleValue,.2)))
+    
+    # draw the distribution of means of the exponential
+    hist(means, main="The Frequency of Means of an Exponential Distribution Approaching the Predicted Normal", ylim = c(0, 300))
+    lines(xseq, densities, col="darkgreen",xlab="", ylab="Density", type="l",lwd=2, cex=2, cex.axis=.8)
+       
+    
+
+})
+```
+
+

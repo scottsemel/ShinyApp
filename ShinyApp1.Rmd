@@ -1,0 +1,45 @@
+---
+title: "Simulation to Visualize the Central Limit Theorem in Action"
+author: "Scott Semel"
+date: "February 24, 2016"
+output: html_document
+---
+
+Outline
+========================================================
+
+This is the outline for the presentation. The purpose is simply just to show how the Central Limit Theorem works.
+
+- Synopsis
+- Data Processing 
+- Results
+
+Synopsis
+========================================================
+
+The goal is to try to show visually how the Central Limit Theorem (CLT) works with a simulation example. Even though most distributions are not normally distributed the sample of n means of a distribution will approximate a normal distribution as n gets large. We are going to use an example with means of an exponential distribution to demonstrate this effect. Just move the slider bar in the ShinyApp to see it converge.
+
+
+Data Processing
+========================================================
+For example, if you receive phone calls at an average rate of 5 per hour, then you can expect to wait 12 minutes for every call on average. Here is a histogram of 1000 draws from simulated exponential distribution with Lambda = .2.
+```{r, echo = FALSE}
+set.seed(3000)
+hist(rexp(1000,.2))
+```
+
+Results
+========================================================
+Now consider the mean of the exponential distribution. As the sample size increases the average of the means of several exponential distributions should converge to a normal distribution
+with mean = 5 and sigma = s / sqrt(n) = 5 / sqrt(40) = .8. 
+```{r, echo=FALSE}
+
+set.seed(3000)
+xseq<-seq(2,9,.01)
+densities<-dnorm(xseq, 5,.8)*500
+means = NULL
+for (i in 1 : 1000) means = c(means, mean(rexp(46,.2)))
+hist(means, main="40", ylim = c(0, 300))
+lines(xseq, densities, col="darkgreen",xlab="", ylab="Density", type="l",lwd=2, cex=2, cex.axis=.8)
+```
+
